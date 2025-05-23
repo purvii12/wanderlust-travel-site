@@ -13,19 +13,26 @@
         <a class="nav-link fun-link" href="/listings"><i class="fa-solid fa-list"></i> All Listings</a>
         <a class="nav-link fun-link" href="/listings/new"><i class="fa-solid fa-plus"></i> Add New Listing</a>
       </div>
-      <!-- USER MENU STARTS HERE -->
+      <!-- USER MENU -->
       <div class="ms-3 d-flex align-items-center">
         <% if (typeof currentUser !== 'undefined' && currentUser) { %>
           <div class="dropdown">
-            <a class="btn btn-light dropdown-toggle d-flex align-items-center" href="#" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-light dropdown-toggle d-flex align-items-center" 
+               href="#" 
+               id="userMenu" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false">
               <i class="fa-solid fa-user-circle fa-lg me-2" style="color:#4B0082;"></i>
               <span class="fw-semibold" style="color:#03017c;"><%= currentUser.username %></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
               <li>
-                <a class="dropdown-item" href="/users/logout">
-                  <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
-                </a>
+                <form action="/users/logout" method="POST" class="d-inline">
+                  <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                  <button type="submit" class="dropdown-item">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                  </button>
+                </form>
               </li>
             </ul>
           </div>
@@ -38,7 +45,6 @@
           </a>
         <% } %>
       </div>
-      <!-- USER MENU ENDS HERE -->
     </div>
   </div>
 </nav>

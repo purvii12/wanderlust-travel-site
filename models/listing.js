@@ -24,7 +24,13 @@ const listingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true // Make this required
+  },
+  category: {
+  type: String,
+  enum: ['beach', 'mountain', 'city', 'countryside', 'all'],
+  default: 'all'
   }
+
 });
 
 module.exports = mongoose.model("Listing", listingSchema);

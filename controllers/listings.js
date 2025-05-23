@@ -106,3 +106,26 @@ module.exports = {
     res.redirect("/listings");
   }
 };
+// In controllers/listings.js
+index: async (req, res) => {
+  let query = {};
+  
+  // Search by location
+  if (req.query.location) {
+    query.$or = [
+      { location: { $regex: req.query.location, $options: 'i' } },
+      { country: { $regex: req.query.location, $options: 'i' } },
+      { title: { $regex: req.query.location, $options: 'i' } }
+    ];
+  }
+  
+  // Filter by price range
+  if (req.query.minPrice || req.query.maxPrice) {
+    query.price = {};
+    if (req.query.minPrice) query.price.$gte = parseInt(req.query.minPrice);
+    if (req.query.maxPrice) query.price.$lte = parseInt(req.query.maxPrice);
+  }
+  
+  const allListings = await Listing.find(query);
+  res.render("listings/index", { allListings });
+}

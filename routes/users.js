@@ -43,7 +43,7 @@ router.post('/login', passport.authenticate('local', {
   res.redirect('/listings');
 });
 
-// LOGOUT
+// LOGOUT (GET method)
 router.get('/logout', (req, res, next) => {
   req.logout(function(err) {
     if (err) { return next(err); }
@@ -51,5 +51,14 @@ router.get('/logout', (req, res, next) => {
     res.redirect('/listings');
   });
 });
+// POST logout (more secure)
+router.post('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    req.flash('success', 'Logged out successfully!');
+    res.redirect('/listings');
+  });
+});
+
 
 module.exports = router;

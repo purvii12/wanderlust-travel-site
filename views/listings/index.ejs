@@ -1,41 +1,113 @@
 <% layout("/layouts/boilerplate") %>
-<% if (success && success.length) { %>
-  <div class="alert alert-success"><%= success %></div>
-<% } %>
-<% if (error && error.length) { %>
-  <div class="alert alert-danger"><%= error %></div>
-<% } %>
 
-<div class="container my-4">
-    <h3 class="mb-4 fw-bold text-center" style="color:#4B0082;">All Listings</h3>
-    <div class="row g-4">
-        <% for(let listing of allListings) { %>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card listing-card shadow-sm h-100">
-                    <div class="listing-img-wrapper">
-                        <img src="<%= listing.image && listing.image.url ? listing.image.url : 'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg' %>" class="card-img-top" alt="<%= listing.title %> image">
-                        <button class="fav-btn"><i class="fa-regular fa-heart"></i></button>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title mb-1" style="color:#4B0082;"><%= listing.title %></h5>
-                        <% if (listing.location) { %>
-                            <div class="listing-location mb-1 text-muted"><i class="fa-solid fa-location-dot"></i> <%= listing.location %></div>
-                        <% } %>
-                        <% if (listing.country) { %>
-                            <div class="listing-country mb-2"><%= listing.country %></div>
-                        <% } %>
-                        <div class="listing-price fw-bold" style="color:#4ba750;">
-                            ₹<%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %> <span class="fs-6 fw-normal text-muted">/night</span>
-                        </div>
-                        <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-outline-primary mt-2" style="border-color:#4B0082; color:#8480d5;">View Details</a>
-                    </div>
-                </div>
+<!-- Filter Bar -->
+<div class="container-fluid bg-light py-3 sticky-top" style="top: 70px; z-index: 1000;">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Category Filters -->
+      <div class="col-md-8">
+        <div class="category-filters d-flex gap-3 overflow-auto">
+          <button class="btn btn-outline-secondary filter-btn active" data-category="all">
+            <i class="fa-solid fa-border-all"></i><br><small>All</small>
+          </button>
+          <button class="btn btn-outline-secondary filter-btn" data-category="beach">
+            <i class="fa-solid fa-umbrella-beach"></i><br><small>Beach</small>
+          </button>
+          <button class="btn btn-outline-secondary filter-btn" data-category="mountain">
+            <i class="fa-solid fa-mountain"></i><br><small>Mountains</small>
+          </button>
+          <button class="btn btn-outline-secondary filter-btn" data-category="city">
+            <i class="fa-solid fa-city"></i><br><small>Cities</small>
+          </button>
+          <button class="btn btn-outline-secondary filter-btn" data-category="countryside">
+            <i class="fa-solid fa-tree"></i><br><small>Countryside</small>
+          </button>
+        </div>
+      </div>
+      <!-- Price Filter & More Filters -->
+      <div class="col-md-4 text-end">
+        <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#filtersModal">
+          <i class="fa-solid fa-sliders"></i> Filters
+        </button>
+        <div class="form-check form-switch d-inline-block">
+          <input class="form-check-input" type="checkbox" id="taxSwitch">
+          <label class="form-check-label" for="taxSwitch"><small>Show total price</small></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filters Modal -->
+<div class="modal fade" id="filtersModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Price Range -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Price Range</label>
+          <div class="row">
+            <div class="col-6">
+              <input type="number" class="form-control" placeholder="Min price" id="minPrice">
             </div>
-        <% } %>
+            <div class="col-6">
+              <input type="number" class="form-control" placeholder="Max price" id="maxPrice">
+            </div>
+          </div>
+        </div>
+        <!-- Property Type (optional, not wired up in JS yet) -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Property Type</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="house" id="house">
+            <label class="form-check-label" for="house">House</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="apartment" id="apartment">
+            <label class="form-check-label" for="apartment">Apartment</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="villa" id="villa">
+            <label class="form-check-label" for="villa">Villa</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="clearFilters()">Clear all</button>
+        <button type="button" class="btn btn-primary" onclick="applyFilters()">Show results</button>
+      </div>
     </div>
-    <div class="d-flex justify-content-center mt-4">
-        <a href="/listings/new" class="btn btn-primary" style="background:#4B0082; border:none;">
-            <i class="fa-solid fa-plus"></i> Create New Listing
-        </a>
-    </div>
+  </div>
+</div>
+
+<!-- Listings Grid -->
+<div class="container mt-4">
+  <div class="row" id="listingsContainer">
+    <% allListings.forEach(listing => { %>
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="listing-card" data-category="<%= listing.category || 'all' %>" data-price="<%= listing.price %>">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="position-relative">
+              <img src="<%= listing.image.url %>" class="card-img-top" style="height: 200px; object-fit: cover;">
+              <span class="listing-price price-display">₹<%= listing.price %>/night</span>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title fw-bold"><%= listing.title %></h6>
+              <p class="text-muted small mb-1">
+                <i class="fa-solid fa-location-dot"></i> <%= listing.location %>, <%= listing.country %>
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">★ 4.8 (125 reviews)</small>
+                <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
 </div>

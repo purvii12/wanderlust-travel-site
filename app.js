@@ -83,7 +83,11 @@ app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 
 // Root route
-app.get("/", (req, res) => res.send("Hi, I am root"));
+// Add this before your listings routes
+app.get("/", (req, res) => {
+  res.render("home");
+});
+
 
 // Error handler
 app.use((err, req, res, next) => {
