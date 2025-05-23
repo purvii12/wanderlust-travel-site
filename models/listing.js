@@ -1,4 +1,3 @@
-// models/listing.js (Optimized)
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -16,7 +15,12 @@ const listingSchema = new Schema({
   price: Number,
   location: String,
   country: String,
-  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }]
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  author: { // <-- Added author field
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  }
 });
 
 module.exports = mongoose.model("Listing", listingSchema);

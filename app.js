@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const mongoose = require("mongoose");
@@ -9,9 +10,14 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const MongoStore = require("connect-mongo");
+const multer = require("multer");
+const { storage } = require("./cloudinary"); // Import from cloudinary.js
+const upload = multer({ storage });
+const cloudinary = require("cloudinary").v2;
+
 const { listingSchema, reviewSchema } = require("./schema.js");
 const Listing = require("./models/listing.js");
-const Review = require("./models/reviews.js");
+const Review = require("./models/review.js");
 const User = require("./models/user.js");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
@@ -19,7 +25,7 @@ const ExpressError = require("./utils/ExpressError.js");
 const app = express();
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
-// Database Connection with modern options
+// Database Connection
 mongoose.connect(MONGO_URL, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
@@ -34,19 +40,15 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "/public")));
 
-// Session configuration with persistent store
+// Session configuration
 app.use(session({
-  store: MongoStore.create({
-    mongoUrl: MONGO_URL,
-    touchAfter: 24 * 3600 // 1 day
-  }),
+  store: MongoStore.create({ mongoUrl: MONGO_URL }),
   secret: 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: {
+  cookie: { 
     httpOnly: true,
-    // secure: true, // Enable in production
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+    maxAge: 1000 * 60 * 60 * 24 * 7 
   }
 }));
 
