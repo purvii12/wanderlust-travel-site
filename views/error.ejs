@@ -1,0 +1,14 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container my-5">
+    <div class="alert alert-danger text-center">
+        <h1 class="display-4">Error <%= typeof status !== "undefined" ? status : 500 %></h1>
+        <p class="lead"><%= typeof message !== "undefined" ? message : "Something went wrong!" %></p>
+        <a href="/listings" class="btn btn-primary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Listings
+        </a>
+        <% if (typeof stack !== "undefined" && stack && process.env.NODE_ENV === "development") { %>
+            <pre class="text-start bg-light p-3 mt-3"><%= stack %></pre>
+        <% } %>
+    </div>
+</div>

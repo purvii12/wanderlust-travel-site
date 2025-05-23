@@ -1,0 +1,36 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="mb-4 text-center" style="color:#4B0082;">Register</h2>
+          <% if (error && error.length) { %>
+            <div class="alert alert-danger"><%= error %></div>
+          <% } %>
+          <form action="/users/register" method="POST" autocomplete="off">
+            <input type="hidden" name="_csrf" value="<%= _csrf %>">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" name="username" required autofocus>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn w-100" style="background:#4B0082; color:white;">Register</button>
+          </form>
+          <div class="mt-3 text-center">
+            <span>Already have an account?</span>
+            <a href="/users/login" style="color:#4B0082;">Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

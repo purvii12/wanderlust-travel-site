@@ -1,0 +1,194 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- Hero Section -->
+<div class="listing-hero">
+    <div class="hero-image" style="background-image: url('<%= listing.image.url %>');"></div>
+    <div class="hero-overlay">
+        <h1 class="display-4 fw-bold text-white"><%= listing.title %></h1>
+        <p class="lead text-white">
+            <i class="fa-solid fa-location-dot"></i>
+            <%= listing.location %>, <%= listing.country %>
+        </p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row g-4">
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="fw-bold" style="color:#4B0082;">About this place</h3>
+                    <p class="fs-5"><%= listing.description %></p>
+                    
+                    <!-- Amenities Section -->
+                    <div class="amenities-section mb-4">
+                        <h4 class="fw-bold mt-4" style="color:#4B0082;"><i class="fa-solid fa-star"></i> Amenities</h4>
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4">
+                                <div class="amenity-item p-2">
+                                    <i class="fa-solid fa-wifi text-purple"></i> Free WiFi
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="amenity-item p-2">
+                                    <i class="fa-solid fa-car text-purple"></i> Free Parking
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="amenity-item p-2">
+                                    <i class="fa-solid fa-snowflake text-purple"></i> Air Conditioning
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rooms & Beds -->
+                    <h4 class="fw-bold mt-4" style="color:#4B0082;"><i class="fa-solid fa-bed"></i> Rooms</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="room-card p-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-door-open fa-lg text-purple"></i>
+                                    <div>
+                                        <h5 class="mb-0">Deluxe Room</h5>
+                                        <small>2 guests · 1 bedroom · 1 bed</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="room-card p-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-door-open fa-lg text-purple"></i>
+                                    <div>
+                                        <h5 class="mb-0">Family Suite</h5>
+                                        <small>4 guests · 2 bedrooms · 3 beds</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nearby Attractions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold" style="color:#4B0082;"><i class="fa-solid fa-map-location-dot"></i> Nearby Attractions</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="attraction-card p-3">
+                                <h5>Mountain View Point</h5>
+                                <small class="text-muted"><i class="fa-solid fa-location-arrow"></i> 2.5 km away</small>
+                                <p class="mt-2">Stunning panoramic views of the valley</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="attraction-card p-3">
+                                <h5>River Trek Trail</h5>
+                                <small class="text-muted"><i class="fa-solid fa-location-arrow"></i> 4.1 km away</small>
+                                <p class="mt-2">Guided nature walks through pristine forests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-3" style="color:#4B0082;">
+                        <i class="fa-solid fa-comments"></i> Reviews
+                    </h4>
+
+                    <% if (listing.reviews && listing.reviews.length > 0) { %>
+                        <ul class="list-group mb-4">
+                            <% listing.reviews.forEach(review => { %>
+                                <li class="list-group-item">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="badge bg-success me-2">
+                                            <i class="fa-solid fa-star"></i> <%= review.rating %>
+                                        </span>
+                                        <span class="fw-bold"><%= review.comment %></span>
+                                    </div>
+                                    <small class="text-muted">
+                                        Posted on <%= review.createdAt ? review.createdAt.toLocaleDateString() : "Unknown Date" %>
+                                    </small>
+                                    <!-- Optional: Review Delete Button -->
+                                    <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>/delete" class="d-inline float-end ms-2" style="display:inline;">
+                                        <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this review?');">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p class="text-muted">No reviews yet. Be the first to leave one!</p>
+                    <% } %>
+
+                    <!-- Add Review Form -->
+                    <form method="POST" action="/listings/<%= listing._id %>/reviews" class="mb-3">
+                        <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                        <div class="mb-2">
+                            <label for="rating" class="form-label">Rating</label>
+                            <select name="rating" id="rating" class="form-select" required>
+                                <option value="" disabled selected>Select rating</option>
+                                <% for(let i=1; i<=5; i++) { %>
+                                    <option value="<%= i %>"><%= i %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="comment" class="form-label">Comment</label>
+                            <textarea name="comment" id="comment" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Add Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking & Actions -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fw-bold" style="color:#4ba750;">
+                            ₹<%= listing.price.toLocaleString("en-IN") %>
+                            <span class="fs-6 fw-normal text-muted">/night</span>
+                        </h3>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <a href="/listings/<%= listing._id %>/edit" class="btn btn-purple">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit Listing
+                        </a>
+                        <form method="POST" action="/listings/<%= listing._id %>/delete" onsubmit="return confirm('Are you sure?');">
+                            <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fa-solid fa-trash"></i> Delete Listing
+                            </button>
+                        </form>
+                        <a href="/listings" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Listings
+                        </a>
+                    </div>
+
+                    <!-- Key Details -->
+                    <div class="mt-4">
+                        <h5 class="fw-bold" style="color:#4B0082;">Key Details</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fa-solid fa-users text-purple"></i> Max guests: 4</li>
+                            <li class="mb-2"><i class="fa-solid fa-ruler-combined text-purple"></i> Area: 1200 sq.ft</li>
+                            <li class="mb-2"><i class="fa-solid fa-shower text-purple"></i> 2 bathrooms</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
