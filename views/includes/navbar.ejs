@@ -15,7 +15,7 @@
       </div>
       <!-- USER MENU STARTS HERE -->
       <div class="ms-3 d-flex align-items-center">
-        <% if (currentUser) { %>
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
           <div class="dropdown">
             <a class="btn btn-light dropdown-toggle d-flex align-items-center" href="#" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa-solid fa-user-circle fa-lg me-2" style="color:#4B0082;"></i>
@@ -42,8 +42,4 @@
     </div>
   </div>
 </nav>
-<% if (typeof currentUser !== 'undefined' && currentUser) { %>
-  <!-- Logged-in menu -->
-<% } else { %>
-  <!-- Logged-out menu -->
-<% } %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
