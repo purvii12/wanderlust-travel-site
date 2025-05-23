@@ -42,3 +42,8 @@
     </div>
   </div>
 </nav>
+<% if (typeof currentUser !== 'undefined' && currentUser) { %>
+  <!-- Logged-in menu -->
+<% } else { %>
+  <!-- Logged-out menu -->
+<% } %>
