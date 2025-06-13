@@ -91,8 +91,9 @@ app.get("/", (req, res) => {
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong!" } = err;
-  res.status(statusCode).render("error", { message });
+  res.status(statusCode).render("error", { statusCode, message });
 });
+
 
 
 const port = process.env.PORT || 8080;
