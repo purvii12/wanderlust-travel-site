@@ -89,11 +89,11 @@ app.get("/", (req, res) => {
 });
 
 
-// Error handler
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong!" } = err;
   res.status(statusCode).render("error", { message });
 });
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
