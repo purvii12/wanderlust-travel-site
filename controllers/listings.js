@@ -1,8 +1,6 @@
 const Listing = require("../models/listing");
 const Review = require("../models/reviews");
-const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+
 
 module.exports = {
   index: async (req, res) => {
